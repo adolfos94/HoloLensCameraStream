@@ -28,6 +28,7 @@ public class CameraStreamHelper : MonoBehaviour
         videoCapture.WorldOriginPtr = ptr;
     }
 
+    // Callback OnVideoCaptureCreated(VideoCapture videoCapture)
     public void GetVideoCaptureAsync(OnVideoCaptureResourceCreatedCallback onVideoCaptureAvailable)
     {
         if (onVideoCaptureAvailable == null)

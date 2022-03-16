@@ -20,10 +20,26 @@ namespace HoloLensCameraStream
         /// </summary>
         public readonly int height;
 
-        public Resolution(int width, int height)
+        /// <summary>
+        /// The frame rate property.
+        /// </summary>
+        public readonly int frameRate;
+
+        public Resolution(int width, int height, int frameRate)
         {
             this.width = width;
             this.height = height;
+            this.frameRate = frameRate;
+        }
+
+        /// <summary>
+        /// width@height:fps.
+        /// </summary>
+        override public string ToString()
+        {
+            string output;
+            output = width + "@" + height + ":" + frameRate + "\n";
+            return output;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿//  
+//  
 // Copyright (c) 2017 Vulcan, Inc. All rights reserved.  
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 //
@@ -182,7 +182,7 @@ namespace HoloLensCameraStream
             var allPropertySets = _mediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(STREAM_TYPE).Select(x => x as VideoEncodingProperties); //Returns IEnumerable<VideoEncodingProperties>
             foreach (var propertySet in allPropertySets)
             {
-                resolutions.Add(new Resolution((int)propertySet.Width, (int)propertySet.Height));
+                resolutions.Add(new Resolution((int)propertySet.Width, (int)propertySet.Height, (int)propertySet.FrameRate.Numerator));
             }
 
             return resolutions.AsReadOnly();

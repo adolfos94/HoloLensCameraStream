@@ -608,11 +608,11 @@ PlayerSettings:
   m_MobileRenderingPath: 1
   metroPackageName: HoloLensVideoCaptureExample
   metroPackageVersion: 1.0.0.0
-  metroCertificatePath: Assets\WSATestCertificate.pfx
+  metroCertificatePath: Assets/WSATestCertificate.pfx
   metroCertificatePassword: 
   metroCertificateSubject: DefaultCompany
   metroCertificateIssuer: DefaultCompany
-  metroCertificateNotAfter: 003c475808ced301
+  metroCertificateNotAfter: 804b03049058d901
   metroApplicationDescription: HoloLensVideoCaptureExample
   wsaImages: {}
   metroTileShortName: HoloLensVideoCaptureExample
