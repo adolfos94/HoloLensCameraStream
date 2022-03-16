@@ -4,15 +4,13 @@ using UnityEngine;
 
 public class WebCamStream : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public GameObject cameraButton;
+    public GameObject previewButton;
+
+
+    private void Start()
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
