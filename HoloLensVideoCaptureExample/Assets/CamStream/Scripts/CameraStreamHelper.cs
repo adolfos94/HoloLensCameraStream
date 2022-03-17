@@ -91,7 +91,7 @@ public class CameraStreamHelper : MonoBehaviour
         }
 
         instance = this;
-        VideoCapture.CreateAync(OnVideoCaptureInstanceCreated);
+        VideoCapture.CreateAsync(OnVideoCaptureInstanceCreated);
     }
 
     private void OnDestroy()

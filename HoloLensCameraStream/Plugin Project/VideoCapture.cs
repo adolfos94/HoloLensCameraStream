@@ -141,7 +141,7 @@ namespace HoloLensCameraStream
         /// If the instance failed to be created, the instance returned will be null. Also, holograms will not appear in the video.
         /// </summary>
         /// <param name="onCreatedCallback">This callback will be invoked when the VideoCapture instance is created and ready to be used.</param>
-        public static async void CreateAync(OnVideoCaptureResourceCreatedCallback onCreatedCallback)
+        public static async void CreateAsync(OnVideoCaptureResourceCreatedCallback onCreatedCallback)
         {
             var allFrameSourceGroups = await MediaFrameSourceGroup.FindAllAsync();                                              //Returns IReadOnlyList<MediaFrameSourceGroup>
             var candidateFrameSourceGroups = allFrameSourceGroups.Where(group => group.SourceInfos.Any(IsColorVideo));   //Returns IEnumerable<MediaFrameSourceGroup>
@@ -182,7 +182,11 @@ namespace HoloLensCameraStream
             var allPropertySets = _mediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(STREAM_TYPE).Select(x => x as VideoEncodingProperties); //Returns IEnumerable<VideoEncodingProperties>
             foreach (var propertySet in allPropertySets)
             {
-                resolutions.Add(new Resolution((int)propertySet.Width, (int)propertySet.Height, (int)propertySet.FrameRate.Numerator));
+                resolutions.Add(new Resolution(
+                        (int)propertySet.Width, 
+                        (int)propertySet.Height, 
+                        (int)propertySet.FrameRate.Numerator / (int)propertySet.FrameRate.Denominator
+                        ));
             }
 
             return resolutions.AsReadOnly();

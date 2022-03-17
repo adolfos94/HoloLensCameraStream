@@ -541,6 +541,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 643740585137549512, guid: 81f06fd134419aa4186559e61765bd18,
+        type: 3}
+      propertyPath: minDistance
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 2994527796906731598, guid: 81f06fd134419aa4186559e61765bd18,
         type: 3}
       propertyPath: additionalOffset.y
