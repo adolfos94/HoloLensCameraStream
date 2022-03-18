@@ -129,4 +129,9 @@ public class WebCamStream : MonoBehaviour
 
         sample.Dispose();
     }
+
+    public void QuitApp()
+    {
+        Application.Quit();
+    }
 }

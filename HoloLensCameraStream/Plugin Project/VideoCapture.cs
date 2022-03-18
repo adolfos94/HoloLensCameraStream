@@ -246,8 +246,10 @@ namespace HoloLensCameraStream
 
             var pixelFormat = ConvertCapturePixelFormatToMediaEncodingSubtype(setupParams.pixelFormat);
             _frameReader = await _mediaCapture.CreateFrameReaderAsync(mediaFrameSource, pixelFormat);
+            _frameReader.AcquisitionMode = MediaFrameReaderAcquisitionMode.Realtime;
             _frameReader.FrameArrived += HandleFrameArrived;
             await _frameReader.StartAsync();
+
             VideoEncodingProperties properties = GetVideoEncodingPropertiesForCameraParams(setupParams);
 
             // Historical context: https://github.com/VulcanTechnologies/HoloLensCameraStream/issues/6
@@ -319,8 +321,8 @@ namespace HoloLensCameraStream
                 return;
             }
 
-            _frameReader.FrameArrived -= HandleFrameArrived;
             await _frameReader.StopAsync();
+            _frameReader.FrameArrived -= HandleFrameArrived;
             _frameReader.Dispose();
             _frameReader = null;
 
