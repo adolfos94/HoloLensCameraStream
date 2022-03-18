@@ -1,5 +1,5 @@
-﻿//  
-// Copyright (c) 2017 Vulcan, Inc. All rights reserved.  
+//
+// Copyright (c) 2017 Vulcan, Inc. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 //
 
@@ -21,19 +21,19 @@ namespace HoloLensCameraStream
         /// The guid for getting the view transform from the frame sample.
         /// See https://developer.microsoft.com/en-us/windows/mixed-reality/locatable_camera#locating_the_device_camera_in_the_world
         /// </summary>
-        static Guid viewTransformGuid = new Guid("4E251FA4-830F-4770-859A-4B8D99AA809B");
+        private static Guid viewTransformGuid = new Guid("4E251FA4-830F-4770-859A-4B8D99AA809B");
 
         /// <summary>
         /// The guid for getting the projection transform from the frame sample.
         /// See https://developer.microsoft.com/en-us/windows/mixed-reality/locatable_camera#locating_the_device_camera_in_the_world
         /// </summary>
-        static Guid projectionTransformGuid = new Guid("47F9FCB5-2A02-4F26-A477-792FDF95886A");
+        private static Guid projectionTransformGuid = new Guid("47F9FCB5-2A02-4F26-A477-792FDF95886A");
 
         /// <summary>
         /// The guid for getting the camera coordinate system for the frame sample.
         /// See https://developer.microsoft.com/en-us/windows/mixed-reality/locatable_camera#locating_the_device_camera_in_the_world
         /// </summary>
-        static Guid cameraCoordinateSystemGuid = new Guid("9D13C82F-2199-4E67-91CD-D1A4181F2534");
+        private static Guid cameraCoordinateSystemGuid = new Guid("9D13C82F-2199-4E67-91CD-D1A4181F2534");
 
         /// <summary>
         /// How many bytes are in the frame.
@@ -76,7 +76,7 @@ namespace HoloLensCameraStream
 
         //Private members
 
-        MediaFrameReference frameReference;
+        private MediaFrameReference frameReference;
 
         internal VideoCaptureSample(MediaFrameReference frameReference, SpatialCoordinateSystem worldOrigin)
         {
@@ -97,7 +97,7 @@ namespace HoloLensCameraStream
         /// this byte array to minimize unecessarily high memory ceiling or unnecessary garbage collections.
         /// </summary>
         /// <param name="byteBuffer">A byte array with a length the size of VideoCaptureSample.dataLength</param>
-        public void CopyRawImageDataIntoBuffer(byte[] byteBuffer)
+        public bool CopyRawImageDataIntoBuffer(byte[] byteBuffer)
         {
             //Here is a potential way to get direct access to the buffer:
             //http://stackoverflow.com/questions/25481840/how-to-change-mediacapture-to-byte
@@ -114,9 +114,9 @@ namespace HoloLensCameraStream
             }
 
             bitmap.CopyToBuffer(byteBuffer.AsBuffer());
-            isBitmapCopied = true;
-        }
 
+            return true;
+        }
 
         public void CopyRawImageDataIntoBuffer(List<byte> byteBuffer)
         {
@@ -145,7 +145,7 @@ namespace HoloLensCameraStream
                 outMatrix = GetIdentityMatrixFloatArray();
                 return false;
             }
-            
+
             Matrix4x4 cameraViewTransform = ConvertByteArrayToMatrix4x4(frameReference.Properties[viewTransformGuid] as byte[]);
             if (cameraViewTransform == null)
             {
@@ -204,7 +204,7 @@ namespace HoloLensCameraStream
             }
 
             Matrix4x4 projectionMatrix = ConvertByteArrayToMatrix4x4(frameReference.Properties[projectionTransformGuid] as byte[]);
-            
+
             // Transpose matrix to match expected Unity format
             projectionMatrix = Matrix4x4.Transpose(projectionMatrix);
             outMatrix = ConvertMatrixToFloatArray(projectionMatrix);
@@ -271,25 +271,27 @@ namespace HoloLensCameraStream
                 BitConverter.ToSingle(m, 60));
         }
 
-        static CapturePixelFormat ConvertBitmapPixelFormatToCapturePixelFormat(BitmapPixelFormat format)
+        private static CapturePixelFormat ConvertBitmapPixelFormatToCapturePixelFormat(BitmapPixelFormat format)
         {
             switch (format)
             {
                 case BitmapPixelFormat.Bgra8:
                     return CapturePixelFormat.BGRA32;
+
                 case BitmapPixelFormat.Nv12:
                     return CapturePixelFormat.NV12;
+
                 default:
                     return CapturePixelFormat.Unknown;
             }
         }
 
-        static byte[] GetIdentityMatrixByteArray()
+        private static byte[] GetIdentityMatrixByteArray()
         {
             return new byte[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
         }
 
-        static float[] GetIdentityMatrixFloatArray()
+        private static float[] GetIdentityMatrixFloatArray()
         {
             return new float[] { 1f, 0, 0, 0, 0, 1f, 0, 0, 0, 0, 1f, 0, 0, 0, 0, 1f };
         }

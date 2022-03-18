@@ -1,5 +1,5 @@
-//  
-// Copyright (c) 2017 Vulcan, Inc. All rights reserved.  
+//
+// Copyright (c) 2017 Vulcan, Inc. All rights reserved.
 // Licensed under the Apache 2.0 license. See LICENSE file in the project root for full license information.
 //
 
@@ -18,8 +18,6 @@ using Windows.Perception.Spatial;
 using Windows.Foundation.Collections;
 using Windows.Foundation;
 using System.Diagnostics;
-
-
 
 namespace HoloLensCameraStream
 {
@@ -84,12 +82,12 @@ namespace HoloLensCameraStream
         /// This is called every time there is a new frame sample available.
         /// You must properly initialize the VideoCapture object, including calling StartVideoModeAsync()
         /// before this event will begin firing.
-        /// 
+        ///
         /// You should not subscribe to FrameSampleAcquired if you do not need access to most
         /// of the video frame samples for your application (for instance, if you are doing image detection once per second),
         /// because there is significant memory management overhead to processing every frame.
         /// Instead, you can call RequestNextFrameSample() which will respond with the next available sample only.
-        /// 
+        ///
         /// See the VideoFrameSample class for more information about dealing with the memory
         /// complications of the BitmapBuffer.
         /// </summary>
@@ -97,9 +95,9 @@ namespace HoloLensCameraStream
 
         /// <summary>
         /// Indicates whether or not the VideoCapture instance is currently streaming video.
-        /// This becomes true when the OnVideoModeStartedCallback is called, and ends 
+        /// This becomes true when the OnVideoModeStartedCallback is called, and ends
         /// when the OnVideoModeStoppedCallback is called.
-        /// 
+        ///
         /// "VideoMode", as I have interpreted means that the frame reader begins delivering
         /// the bitmap buffer, making it available to be consumed.
         /// </summary>
@@ -112,6 +110,7 @@ namespace HoloLensCameraStream
         }
 
         internal SpatialCoordinateSystem worldOrigin { get; private set; }
+
         public IntPtr WorldOriginPtr
         {
             set
@@ -120,20 +119,20 @@ namespace HoloLensCameraStream
             }
         }
 
-        static readonly MediaStreamType STREAM_TYPE = MediaStreamType.VideoPreview;
-        static readonly Guid ROTATION_KEY = new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1");
+        private static readonly MediaStreamType STREAM_TYPE = MediaStreamType.VideoPreview;
+        private static readonly Guid ROTATION_KEY = new Guid("C380465D-2271-428C-9B83-ECEA3B4A85C1");
 
-        MediaFrameSourceGroup _frameSourceGroup;
-        MediaFrameSourceInfo _frameSourceInfo;
-        DeviceInformation _deviceInfo;
-        MediaCapture _mediaCapture;
-        MediaFrameReader _frameReader;
-        
-        VideoCapture(MediaFrameSourceGroup frameSourceGroup, MediaFrameSourceInfo frameSourceInfo, DeviceInformation deviceInfo)
+        private MediaFrameSourceGroup _frameSourceGroup;
+        private MediaFrameSourceInfo _frameSourceInfo;
+        private DeviceInformation _deviceInfo;
+        private MediaCapture _mediaCapture;
+        private MediaFrameReader _frameReader;
+
+        private VideoCapture(MediaFrameSourceGroup frameSourceGroup, MediaFrameSourceInfo frameSourceInfo, DeviceInformation deviceInfo)
         {
-            _frameSourceGroup   = frameSourceGroup;
-            _frameSourceInfo    = frameSourceInfo;
-            _deviceInfo         = deviceInfo;
+            _frameSourceGroup = frameSourceGroup;
+            _frameSourceInfo = frameSourceInfo;
+            _deviceInfo = deviceInfo;
         }
 
         /// <summary>
@@ -146,7 +145,7 @@ namespace HoloLensCameraStream
             var allFrameSourceGroups = await MediaFrameSourceGroup.FindAllAsync();                                              //Returns IReadOnlyList<MediaFrameSourceGroup>
             var candidateFrameSourceGroups = allFrameSourceGroups.Where(group => group.SourceInfos.Any(IsColorVideo));   //Returns IEnumerable<MediaFrameSourceGroup>
             var selectedFrameSourceGroup = candidateFrameSourceGroups.FirstOrDefault();                                         //Returns a single MediaFrameSourceGroup
-            
+
             if (selectedFrameSourceGroup == null)
             {
                 onCreatedCallback?.Invoke(null);
@@ -154,16 +153,16 @@ namespace HoloLensCameraStream
             }
 
             var selectedFrameSourceInfo = selectedFrameSourceGroup.SourceInfos.FirstOrDefault(); //Returns a MediaFrameSourceInfo
-            
+
             if (selectedFrameSourceInfo == null)
             {
                 onCreatedCallback?.Invoke(null);
                 return;
             }
-            
+
             var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);   //Returns DeviceCollection
             var deviceInformation = devices.FirstOrDefault();                               //Returns a single DeviceInformation
-            
+
             if (deviceInformation == null)
             {
                 onCreatedCallback(null);
@@ -183,8 +182,8 @@ namespace HoloLensCameraStream
             foreach (var propertySet in allPropertySets)
             {
                 resolutions.Add(new Resolution(
-                        (int)propertySet.Width, 
-                        (int)propertySet.Height, 
+                        (int)propertySet.Width,
+                        (int)propertySet.Height,
                         (int)propertySet.FrameRate.Numerator / (int)propertySet.FrameRate.Denominator
                         ));
             }
@@ -226,10 +225,10 @@ namespace HoloLensCameraStream
 
         /// <summary>
         /// Asynchronously starts video mode.
-        /// 
+        ///
         /// Activates the web camera with the various settings specified in CameraParameters.
         /// Only one VideoCapture instance can start the video mode at any given time.
-        /// After starting the video mode, you listen for new video frame samples via the VideoCapture.FrameSampleAcquired event, 
+        /// After starting the video mode, you listen for new video frame samples via the VideoCapture.FrameSampleAcquired event,
         /// or by calling VideoCapture.RequestNextFrameSample() when will return the next available sample.
         /// While in video mode, more power will be consumed so make sure that you call VideoCapture.StopVideoModeAsync qhen you can afford the start/stop video mode overhead.
         /// </summary>
@@ -238,7 +237,7 @@ namespace HoloLensCameraStream
         public async void StartVideoModeAsync(CameraParameters setupParams, OnVideoModeStartedCallback onVideoModeStartedCallback)
         {
             var mediaFrameSource = _mediaCapture.FrameSources[_frameSourceInfo.Id]; //Returns a MediaFrameSource
-            
+
             if (mediaFrameSource == null)
             {
                 onVideoModeStartedCallback?.Invoke(new VideoCaptureResult(1, ResultType.UnknownError, false));
@@ -256,11 +255,11 @@ namespace HoloLensCameraStream
             {
                 properties.Properties.Add(ROTATION_KEY, 180);
             }
-			
-			//	gr: taken from here https://forums.hololens.com/discussion/2009/mixedrealitycapture
-			IVideoEffectDefinition ved = new VideoMRCSettings( setupParams.enableHolograms, setupParams.enableVideoStabilization, setupParams.videoStabilizationBufferSize, setupParams.hologramOpacity );
-			await _mediaCapture.AddVideoEffectAsync(ved, MediaStreamType.VideoPreview);
-        
+
+            //	gr: taken from here https://forums.hololens.com/discussion/2009/mixedrealitycapture
+            IVideoEffectDefinition ved = new VideoMRCSettings(setupParams.enableHolograms, setupParams.enableVideoStabilization, setupParams.videoStabilizationBufferSize, setupParams.hologramOpacity);
+            await _mediaCapture.AddVideoEffectAsync(ved, STREAM_TYPE);
+
             await _mediaCapture.VideoDeviceController.SetMediaStreamPropertiesAsync(STREAM_TYPE, properties);
 
             onVideoModeStartedCallback?.Invoke(new VideoCaptureResult(0, ResultType.Success, true));
@@ -273,7 +272,7 @@ namespace HoloLensCameraStream
         /// you were planning on sending frames to a remote image recognition service twice per second,
         /// you may consider using this method rather than ignoring most of the event dispatches from FrameSampleAcquired.
         /// This will avoid the overhead of acquiring and disposing of unused frames.
-        /// 
+        ///
         /// If, for whatever reason, a frame reference cannot be obtained, it is possible that the callback will return a null sample.
         /// </summary>
         /// <param name="onFrameSampleAcquired"></param>
@@ -330,7 +329,7 @@ namespace HoloLensCameraStream
 
         /// <summary>
         /// Dispose must be called to shutdown the PhotoCapture instance.
-        /// 
+        ///
         /// If your VideoCapture instance successfully called VideoCapture.StartVideoModeAsync,
         /// you must make sure that you call VideoCapture.StopVideoModeAsync before disposing your VideoCapture instance.
         /// </summary>
@@ -340,11 +339,11 @@ namespace HoloLensCameraStream
             {
                 throw new Exception("Please make sure StopVideoModeAsync() is called before displosing the VideoCapture object.");
             }
-            
+
             _mediaCapture?.Dispose();
         }
 
-        async Task CreateMediaCaptureAsync()
+        private async Task CreateMediaCaptureAsync()
         {
             if (_mediaCapture != null)
             {
@@ -362,7 +361,7 @@ namespace HoloLensCameraStream
             _mediaCapture.VideoDeviceController.Focus.TrySetAuto(true);
         }
 
-        void HandleFrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
+        private void HandleFrameArrived(MediaFrameReader sender, MediaFrameArrivedEventArgs args)
         {
             if (FrameSampleAcquired == null)
             {
@@ -379,7 +378,7 @@ namespace HoloLensCameraStream
             }
         }
 
-        VideoEncodingProperties GetVideoEncodingPropertiesForCameraParams(CameraParameters cameraParams)
+        private VideoEncodingProperties GetVideoEncodingPropertiesForCameraParams(CameraParameters cameraParams)
         {
             var allPropertySets = _mediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(STREAM_TYPE).Select((x) => x as VideoEncodingProperties)
                 .Where((x) =>
@@ -388,7 +387,7 @@ namespace HoloLensCameraStream
                 if (x.FrameRate.Denominator == 0) return false;
 
                 double calculatedFrameRate = (double)x.FrameRate.Numerator / (double)x.FrameRate.Denominator;
-                
+
                 return
                 x.Width == (uint)cameraParams.cameraResolutionWidth &&
                 x.Height == (uint)cameraParams.cameraResolutionHeight &&
@@ -399,39 +398,42 @@ namespace HoloLensCameraStream
             {
                 throw new Exception("Could not find an encoding property set that matches the given camera parameters.");
             }
-            
+
             var chosenPropertySet = allPropertySets.FirstOrDefault();
             return chosenPropertySet;
         }
 
-        static bool IsColorVideo(MediaFrameSourceInfo sourceInfo)
+        private static bool IsColorVideo(MediaFrameSourceInfo sourceInfo)
         {
             //TODO: Determine whether 'VideoPreview' or 'VideoRecord' is the appropriate type. What's the difference?
             return (sourceInfo.MediaStreamType == STREAM_TYPE &&
                 sourceInfo.SourceKind == MediaFrameSourceKind.Color);
         }
 
-        static string ConvertCapturePixelFormatToMediaEncodingSubtype(CapturePixelFormat format)
+        private static string ConvertCapturePixelFormatToMediaEncodingSubtype(CapturePixelFormat format)
         {
             switch (format)
             {
                 case CapturePixelFormat.BGRA32:
                     return MediaEncodingSubtypes.Bgra8;
+
                 case CapturePixelFormat.NV12:
                     return MediaEncodingSubtypes.Nv12;
+
                 case CapturePixelFormat.JPEG:
                     return MediaEncodingSubtypes.Jpeg;
+
                 case CapturePixelFormat.PNG:
                     return MediaEncodingSubtypes.Png;
+
                 default:
                     return MediaEncodingSubtypes.Bgra8;
             }
         }
     }
 
-
-	//	from https://forums.hololens.com/discussion/2009/mixedrealitycapture
-	public class VideoMRCSettings : IVideoEffectDefinition
+    //	from https://forums.hololens.com/discussion/2009/mixedrealitycapture
+    public class VideoMRCSettings : IVideoEffectDefinition
     {
         public string ActivatableClassId
         {
@@ -445,7 +447,7 @@ namespace HoloLensCameraStream
         {
             get; private set;
         }
-        
+
         public VideoMRCSettings(bool HologramCompositionEnabled, bool VideoStabilizationEnabled, int VideoStabilizationBufferLength, float GlobalOpacityCoefficient)
         {
             Properties = (IPropertySet)new PropertySet();
