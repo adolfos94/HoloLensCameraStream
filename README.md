@@ -3,6 +3,11 @@ This Unity plugin makes the HoloLens video camera frames available to a Unity ap
 
 Use this if you need access to the HoloLens camera's frame buffer in Unity, including the [locatable camera attributes](https://developer.microsoft.com/en-us/windows/mixed-reality/locatable_camera).
 
+## Works with:
+- Unity v2019.4.X
+- MRTK v2.7.3
+- HoloLens 2
+
 ## With this plugin, you can
 * Do computer vision and machine learning on the frames in real time. (algorithms not included)
 * Show a preview of what the HoloLens camera sees.
