@@ -21,9 +21,6 @@ There are two separate "solutions" (if you will) in this repository:
 * **The Plugin (HoloLensCameraStream/)** - This is a Video Studio solution that builds the Unity Plugin, which is just a DLL (library file). You can drop this DLL into a Unity project (in the appropriate directory) and then use its public methods, properties, and events from Unity.
 * **The Unity example project (HoloLensVideoCaptureExample)/** - This shows you how to use the HoloLensCameraStream plugin in a Unity project. You can build it and run it on the HoloLens, or copy it and use it as a starter template for your own project.
 
-### Things you need
-* [The HoloLens development tools](https://developer.microsoft.com/en-us/windows/mixed-reality/install_the_tools), sans Vuforia and the Emulator.
-
 ### Building the Plugin
 The plugin solution has two projects. One is the actual library project, and the other is a "dummy" or "placeholder" project that is used to keep the Unity editor from complaining ([more info here](https://docs.unity3d.com/Manual/windowsstore-plugins.html)). The placeholder project doesn't do anything, it just mimics the plugin's public API. To build the solution (including both projects), follow the steps below:
 1. **Clone this repository.**
